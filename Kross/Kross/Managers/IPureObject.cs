@@ -10,6 +10,12 @@ namespace Kross.Managers
         void SetActive(bool isActive);
         bool IsActive();
 
+        void SetOnGround(bool onGround);
+
+        BoundingSphere Collider();
+
+        void SetInFrustumView(bool inView);
+
         void SetModel(Model model);
         void DrawModel();
 

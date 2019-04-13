@@ -47,6 +47,8 @@
     <Compile Include="Managers\Controller.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Managers\IPureObject.cs" />
+    <Compile Include="Managers\Message Bus\Message.cs" />
+    <Compile Include="Managers\Message Bus\MessageBus.cs" />
     <Compile Include="Managers\Physics.cs" />
     <Compile Include="Managers\Player.cs" />
     <Compile Include="Program.cs" />

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Kross.Managers;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -33,6 +34,7 @@ namespace Kross
             controller = new Controller(100);
             Physics.Init(controller);
             Player.Init(0.5f, 20f);
+            MessageBus.Init();
             skyBox = new SkyBox(graphics.GraphicsDevice);
             base.Initialize();
         }

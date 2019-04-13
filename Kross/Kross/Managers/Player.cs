@@ -25,7 +25,7 @@ namespace Kross
         public static void Init(float boundingSphereRadius, float _speed)
         {
             originalMouseState = Mouse.GetState();
-            worldPosition = Matrix.CreateTranslation(new Vector3(-6f, 10f, 0));
+            worldPosition = Matrix.CreateTranslation(new Vector3(-6f, 2f, 0));
             boundingSphere = new BoundingSphere(worldPosition.Translation, boundingSphereRadius);
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 1500f);
             currentGravityValue = new Vector3(0, 0, 0);
@@ -98,7 +98,7 @@ namespace Kross
             Vector3 cameraPosition = worldPosition.Translation + (worldPosition.Backward * 7) + (worldPosition.Up * 2);
             Vector3 cameraTarget = worldPosition.Translation + (worldPosition.Forward * 10);
             cameraView = Matrix.CreateLookAt(cameraPosition, cameraTarget, Vector3.Up);
-
+            
             foreach(Ship ship in Physics.GetShips())
             {
                 ship.SetInFrustumView(InView(ship.Collider()));

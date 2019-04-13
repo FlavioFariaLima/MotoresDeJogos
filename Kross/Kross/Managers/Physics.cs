@@ -1,22 +1,19 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
+﻿using Kross.Managers;
+using Microsoft.Xna.Framework;
 
 namespace Kross
 {
     class Physics
     {
         static Controller controller;
-        static Ship[] ships;
+        static IPureObject[] objects;
         static Vector3 gravityAmount;
         static bool collision;
 
         public static void Init(Controller _controller)
         {
             controller = _controller;
-            ships = controller.Ships();
+            objects = controller.Ships();
             gravityAmount = new Vector3(0, -0.05f, 0);
         }
 
@@ -30,14 +27,14 @@ namespace Kross
             return collision;
         }
 
-        public static Ship[] GetShips()
+        public static IPureObject[] GetShips()
         {
-            return ships;
+            return objects;
         }
 
         public static void Update()
         {
-            foreach(Ship ship in ships)
+            foreach(IPureObject ship in objects)
             {
                 if (ship.IsActive())
                 {
