@@ -11,10 +11,9 @@ namespace Kross
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        //Matrix.CreateLookAt(new Vector3(0, 30, 50), new Vector3(0, 0, 0), Vector3.UnitY);
-        private Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.1f, 100f);
 
         Controller controller;
+        SkyBox skyBox;
 
         public Game1()
         {
@@ -31,8 +30,10 @@ namespace Kross
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            controller = new Controller(10);
-            Player.SetTarget(controller.GetShip(0));
+            controller = new Controller(100);
+            Physics.Init(controller);
+            Player.Init(0.5f, 20f);
+            skyBox = new SkyBox(graphics.GraphicsDevice);
             base.Initialize();
         }
 
@@ -44,8 +45,16 @@ namespace Kross
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            controller.LoadShipModel(Content);
+            controller.LoadAllModels(Content);
             controller.ApplyModelToShips();
+            Player.LoadModel(Content);
+            
+            skyBox.Textures[0] = Content.Load<Texture2D>("Textures/SkyBox/redFront");
+            skyBox.Textures[1] = Content.Load<Texture2D>("Textures/SkyBox/redBack");
+            skyBox.Textures[2] = Content.Load<Texture2D>("Textures/SkyBox/redBottom");
+            skyBox.Textures[3] = Content.Load<Texture2D>("Textures/SkyBox/redTop");
+            skyBox.Textures[4] = Content.Load<Texture2D>("Textures/SkyBox/redLeft");
+            skyBox.Textures[5] = Content.Load<Texture2D>("Textures/SkyBox/redRight");
 
             // TODO: use this.Content to load your game content here
         }
@@ -69,7 +78,13 @@ namespace Kross
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             Player.Update(gameTime);
+            Physics.Update();
             controller.Update();
+            skyBox.Update(gameTime);
+            foreach(Ship ship in controller.Ships())
+            {
+                ship.Update(gameTime);
+            }
 
             // TODO: Add your update logic here
             base.Update(gameTime);
@@ -81,12 +96,10 @@ namespace Kross
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.TransparentBlack);
-            
-            for(int i=0; i < 10; i++)
-            {
-                controller.DrawModel(i, projection);
-            }
+            GraphicsDevice.Clear(Color.Bisque);
+            skyBox.Draw();
+            Player.DrawModel();
+            controller.DrawModels();
 
             // TODO: Add your drawing code here
 

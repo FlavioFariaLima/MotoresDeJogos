@@ -1,25 +1,42 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+﻿using Kross.Managers;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Kross
 {
-    class Ship
+    class Ship : IPureObject
     {
         Model model;
         Matrix worldPosition;
+        BoundingSphere boundingSphere;
 
         bool active;
+        bool onGround;
+        bool inViewFrustum;
+
+        Vector3 gravityValue;
 
         int index;
-        float currentRotation;
 
         public Ship(int _index)
         {
-            active = false;
+            active = true;
             index = _index;
-            worldPosition = Matrix.CreateTranslation(new Vector3(1, 1, 1) * index);
+            worldPosition = Matrix.CreateTranslation(new Vector3(5f, 2f, 0) * index);
+            gravityValue = new Vector3(0, 0, 0);
+            onGround = false;
+            inViewFrustum = false;
+        }
+
+        public Ship(int _index, float boundingSphereRadius)
+        {
+            active = true;
+            index = _index;
+            worldPosition = Matrix.CreateTranslation(new Vector3(5f, 5f, 0) * index);
+            boundingSphere = new BoundingSphere(worldPosition.Translation, boundingSphereRadius);
+            gravityValue = new Vector3(0, 0, 0);
+            onGround = false;
+            inViewFrustum = false;
         }
 
         public void SetActive(bool status)
@@ -32,12 +49,12 @@ namespace Kross
             return active;
         }
 
-        public Vector3 Position()
+        public void SetOnGround(bool _onGround)
         {
-            return worldPosition.Translation;
+            onGround = _onGround;
         }
 
-        public Matrix Translation()
+        public Matrix PositionMatrix()
         {
             return worldPosition;
         }
@@ -52,24 +69,49 @@ namespace Kross
             return index;
         }
 
-        public void DrawModel(Matrix projection)
+        public BoundingSphere Collider()
         {
-            foreach (ModelMesh mesh in model.Meshes)
+            return boundingSphere;
+        }
+
+        public void SetInFrustumView(bool _inView)
+        {
+            inViewFrustum = _inView;
+        }
+
+        public void DrawModel()
+        {
+            if (active && inViewFrustum)
             {
-                foreach (BasicEffect effect in mesh.Effects)
+                foreach (ModelMesh mesh in model.Meshes)
                 {
-                    effect.World = worldPosition;
-                    effect.View = Player.cameraView;
-                    effect.Projection = projection;
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.World = worldPosition;
+                        effect.View = Player.cameraView;
+                        effect.Projection = Player.Projection();
+                    }
+                    mesh.Draw();
                 }
-                mesh.Draw();
             }
         }
 
-        public void Update(Vector3 position, float rotationAmount)
+        public void Update(GameTime gameTime)
         {
-            worldPosition = Matrix.CreateRotationY(currentRotation + rotationAmount) * Matrix.CreateTranslation(worldPosition.Translation + position);
-            currentRotation += rotationAmount;
+            float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0f;
+            if (!onGround)
+            {
+                gravityValue += Physics.GravityAmount();
+                Vector3 valueToAdd = gravityValue * timeDifference;
+                worldPosition = Matrix.CreateTranslation(worldPosition.Translation + valueToAdd);
+                boundingSphere.Center = worldPosition.Translation;
+            }
+            else
+            {
+                worldPosition = Matrix.CreateTranslation(worldPosition.Translation);
+                boundingSphere.Center = worldPosition.Translation;
+                gravityValue = new Vector3(0, 0, 0);
+            }
         }
     }
 }
