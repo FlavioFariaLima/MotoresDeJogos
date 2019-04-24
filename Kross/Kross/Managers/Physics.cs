@@ -1,4 +1,5 @@
 ﻿using Kross.Managers;
+using Kross.Managers.Message_Bus;
 using Microsoft.Xna.Framework;
 
 namespace Kross
@@ -13,7 +14,7 @@ namespace Kross
         public static void Init(Controller _controller)
         {
             controller = _controller;
-            objects = controller.Ships();
+            objects = controller.Objects();
             gravityAmount = new Vector3(0, -0.05f, 0);
         }
 
@@ -34,22 +35,23 @@ namespace Kross
 
         public static void Update()
         {
-            foreach(IPureObject ship in objects)
+            foreach(IPureObject other in objects)
             {
-                if (ship.IsActive())
+                if (other.IsActive())
                 {
-                    if (Player.PlayerCollider().Intersects(ship.Collider()))
+                    if (Player.PlayerCollider().Intersects(other.Collider()))
                     {
-                        ship.SetActive(false);
+                        other.SetActive(false);
+                        MessageBus.AddNewMessage(MessageType.Particle, other.PositionMatrix().Translation);
                     }
 
-                    if (ship.Collider().Intersects(controller.FloorCollider()))
+                    if (other.Collider().Intersects(controller.FloorCollider()))
                     {
-                        ship.SetOnGround(true);
+                        other.SetOnGround(true);
                     }
                     else
                     {
-                        ship.SetOnGround(false);
+                        other.SetOnGround(false);
                     }
                 }
             }

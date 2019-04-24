@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Kross.Managers;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -7,7 +8,6 @@ namespace Kross
 {
     class Player
     {
-        static KeyboardState keyStateAnterior;
         static MouseState originalMouseState;
 
         public static Matrix cameraView;
@@ -51,26 +51,24 @@ namespace Kross
         {
             // Keyboard controllers to be replaced with Input Manager
             Vector3 moveVector = new Vector3(0, 0, 0);
-            KeyboardState keyState = Keyboard.GetState();
-            if (keyState.IsKeyDown(Keys.Up) || keyState.IsKeyDown(Keys.W))
+
+            if(InputHandler.GetKeysDown().Contains(KeyPressed.Up))
                 moveVector += worldPosition.Forward;
-            if (keyState.IsKeyDown(Keys.Down) || keyState.IsKeyDown(Keys.S))
+            if(InputHandler.GetKeysDown().Contains(KeyPressed.Down))
                 moveVector += worldPosition.Backward;
-            if (keyState.IsKeyDown(Keys.Right) || keyState.IsKeyDown(Keys.D))
+            if(InputHandler.GetKeysDown().Contains(KeyPressed.Right))
                 moveVector += worldPosition.Right;
-            if (keyState.IsKeyDown(Keys.Left) || keyState.IsKeyDown(Keys.A))
+            if(InputHandler.GetKeysDown().Contains(KeyPressed.Left))
                 moveVector += worldPosition.Left;
 
             float rotationAmount = 0;
 
-            if (keyState.IsKeyDown(Keys.Q))
+            if (InputHandler.GetKeysDown().Contains(KeyPressed.RotateLeft))
                 rotationAmount = 0.05f;
-            else if (keyState.IsKeyDown(Keys.E))
+            else if (InputHandler.GetKeysDown().Contains(KeyPressed.RotateRight))
                 rotationAmount = -0.05f;
 
             MovePlayer(moveVector, rotationAmount, amount);
-
-            keyStateAnterior = keyState;
         }
 
         private static void MovePlayer(Vector3 vectorToAdd, float rotation, float deltaTime)

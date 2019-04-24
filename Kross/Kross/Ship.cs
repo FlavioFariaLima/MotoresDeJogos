@@ -18,21 +18,21 @@ namespace Kross
 
         int index;
 
-        public Ship(int _index)
+        public Ship(Vector3 position, int _index)
         {
             active = true;
             index = _index;
-            worldPosition = Matrix.CreateTranslation(new Vector3(5f, 2f, 0) * index);
+            worldPosition = Matrix.CreateTranslation(position);
             gravityValue = new Vector3(0, 0, 0);
             onGround = false;
             inViewFrustum = false;
         }
 
-        public Ship(int _index, float boundingSphereRadius)
+        public Ship(Vector3 position, int _index, float boundingSphereRadius)
         {
             active = true;
             index = _index;
-            worldPosition = Matrix.CreateTranslation(new Vector3(5f, 5f, 0) * index);
+            worldPosition = Matrix.CreateTranslation(position);
             boundingSphere = new BoundingSphere(worldPosition.Translation, boundingSphereRadius);
             gravityValue = new Vector3(0, 0, 0);
             onGround = false;
@@ -64,7 +64,7 @@ namespace Kross
             model = _model;
         }
 
-        public int Index()
+        public int PoolPosition()
         {
             return index;
         }
@@ -98,19 +98,22 @@ namespace Kross
 
         public void Update(GameTime gameTime)
         {
-            float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0f;
-            if (!onGround)
+            if (active)
             {
-                gravityValue += Physics.GravityAmount();
-                Vector3 valueToAdd = gravityValue * timeDifference;
-                worldPosition = Matrix.CreateTranslation(worldPosition.Translation + valueToAdd);
-                boundingSphere.Center = worldPosition.Translation;
-            }
-            else
-            {
-                worldPosition = Matrix.CreateTranslation(worldPosition.Translation);
-                boundingSphere.Center = worldPosition.Translation;
-                gravityValue = new Vector3(0, 0, 0);
+                float timeDifference = (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000.0f;
+                if (!onGround)
+                {
+                    gravityValue += Physics.GravityAmount();
+                    Vector3 valueToAdd = gravityValue * timeDifference;
+                    worldPosition = Matrix.CreateTranslation(worldPosition.Translation + valueToAdd);
+                    boundingSphere.Center = worldPosition.Translation;
+                }
+                else
+                {
+                    worldPosition = Matrix.CreateTranslation(worldPosition.Translation);
+                    boundingSphere.Center = worldPosition.Translation;
+                    gravityValue = new Vector3(0, 0, 0);
+                }
             }
         }
     }

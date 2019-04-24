@@ -1,14 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Kross.Managers;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System;
 
 namespace Kross
 {
     class Controller
     {
-        Ship[] ships;
+        IPureObject[] objects;
 
         Model shipModel;
         Model floor;
@@ -16,27 +17,43 @@ namespace Kross
         Matrix floorPosition;
         BoundingBox floorBoundingBox;
 
-        public Controller(int shipNumber)
+        public Controller(int objectsPool)
         {
-            ships = new Ship[shipNumber];
-            for(int i=0; i < shipNumber; i++)
+            objects = new Ship[objectsPool];
+            Vector3 position = new Vector3();
+            int counter = 0;
+            int distanceBetweenRows = 0;
+            float startX = -25;
+            for(int i=0; i < objectsPool; i++)
             {
-                ships[i] = new Ship(i, 0.5f);
+                if(counter == 50)
+                {
+                    distanceBetweenRows += 3;
+                    counter = 0;
+                    startX = -25;
+                }
+                startX += 2.5f;
+                position = new Vector3(startX, distanceBetweenRows, distanceBetweenRows);
+                objects[i] = new Ship(position, i, 0.8f);
+                counter++;
             }
             floorPosition = Matrix.CreateTranslation(0, -4f, 0);
             floorBoundingBox = new BoundingBox(new Vector3(-1000f, -5f, -1000f), new Vector3(1000f, -4f, 1000f));
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
-            
+            foreach (IPureObject _object in objects)
+            {
+                _object.Update(gameTime);
+            }
         }
 
         public void ApplyModelToShips()
         {
-            for(int i=0; i < ships.Length; i++)
+            for(int i=0; i < objects.Length; i++)
             {
-                ships[i].SetModel(shipModel);
+                objects[i].SetModel(shipModel);
             }
         }
 
@@ -48,9 +65,9 @@ namespace Kross
 
         public void DrawModels()
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                ships[i].DrawModel();
+                objects[i].DrawModel();
             }
 
             foreach (ModelMesh mesh in floor.Meshes)
@@ -70,9 +87,9 @@ namespace Kross
             return floorBoundingBox;
         }
 
-        public Ship[] Ships()
+        public IPureObject[] Objects()
         {
-            return ships;
+            return objects;
         }
     }
 }

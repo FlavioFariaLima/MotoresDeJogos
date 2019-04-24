@@ -46,11 +46,16 @@
   <ItemGroup>
     <Compile Include="Managers\Controller.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Managers\InputHandler.cs" />
     <Compile Include="Managers\IPureObject.cs" />
     <Compile Include="Managers\Message Bus\Message.cs" />
     <Compile Include="Managers\Message Bus\MessageBus.cs" />
+    <Compile Include="Managers\Particles\ExplosionParticle.cs" />
+    <Compile Include="Managers\Particles\ExplosionParticlesSystem.cs" />
+    <Compile Include="Managers\Particles\ParticlesManager.cs" />
     <Compile Include="Managers\Physics.cs" />
     <Compile Include="Managers\Player.cs" />
+    <Compile Include="Managers\StateProcess.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ship.cs" />

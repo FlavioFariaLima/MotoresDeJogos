@@ -2,13 +2,13 @@
 
 namespace Kross.Managers.Message_Bus
 {
+    public enum MessageType
+    {
+        Particle
+    }
+
     class Message
     {
-        public enum MessageType
-        {
-            Particle
-        }
-
         MessageType messageType;
         Vector3 position;
 
@@ -16,6 +16,16 @@ namespace Kross.Managers.Message_Bus
         {
             messageType = _messageType;
             position = _position;
+        }
+
+        public MessageType GetMessageType()
+        {
+            return messageType;
+        }
+
+        public Vector3 GetPosition()
+        {
+            return position;
         }
     }
 }

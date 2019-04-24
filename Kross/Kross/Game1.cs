@@ -1,7 +1,9 @@
 ﻿using Kross.Managers;
+using Kross.Managers.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Kross
 {
@@ -15,6 +17,8 @@ namespace Kross
 
         Controller controller;
         SkyBox skyBox;
+        Random random;
+        BasicEffect particlesEffect;
 
         public Game1()
         {
@@ -30,11 +34,15 @@ namespace Kross
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            controller = new Controller(100);
+            particlesEffect = new BasicEffect(graphics.GraphicsDevice);
+            random = new Random();
+
+            InputHandler.Init();
+            controller = new Controller(1000);
             Physics.Init(controller);
-            Player.Init(0.5f, 20f);
+            Player.Init(0.8f, 20f);
             MessageBus.Init();
+            ExplosionParticlesSystem.Initialize(random);
             skyBox = new SkyBox(graphics.GraphicsDevice);
             base.Initialize();
         }
@@ -79,14 +87,13 @@ namespace Kross
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            InputHandler.Update();
             Player.Update(gameTime);
             Physics.Update();
-            controller.Update();
+            ParticlesManager.Update();
+            ExplosionParticlesSystem.Update(random, gameTime);
+            controller.Update(gameTime);
             skyBox.Update(gameTime);
-            foreach(Ship ship in controller.Ships())
-            {
-                ship.Update(gameTime);
-            }
 
             // TODO: Add your update logic here
             base.Update(gameTime);
@@ -101,6 +108,7 @@ namespace Kross
             GraphicsDevice.Clear(Color.Bisque);
             skyBox.Draw();
             Player.DrawModel();
+            ExplosionParticlesSystem.Draw(graphics.GraphicsDevice, particlesEffect);
             controller.DrawModels();
 
             // TODO: Add your drawing code here
